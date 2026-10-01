@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kyle Werther | CAD Portfolio</title>
+  <meta name="description" content="CAD and mechanical design portfolio of Kyle Werther, R&D Engineer and SOLIDWORKS Certified Professional (CSWP).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f6fb0'/%3E%3Ctext x='16' y='21.5' font-family='Arial' font-weight='700' font-size='14' fill='white' text-anchor='middle'%3EKW%3C/text%3E%3C/svg%3E">
+  <script type="importmap">
+  { "imports": {
+      "three": "./vendor/three/build/three.module.js",
+      "three/addons/": "./vendor/three/addons/"
+  } }
+  </script>
+</head>
+<body>
+
+<header class="nav" id="top">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand"><span class="brand-mark">KW</span> Kyle Werther</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#designs">Designs</a>
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+      <a href="assets/KJW_Resume.pdf" target="_blank" rel="noopener" class="btn btn-sm">Resume</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <div class="hero-text">
+      <p class="eyebrow mono">R&amp;D Engineer · Medical Devices · CSWP</p>
+      <h1>Kyle Werther</h1>
+      <p class="lede">I design and prototype mechanical test fixtures and medical device components in SOLIDWORKS, then prove them out on the bench. This portfolio collects five designs from concept to tested part.</p>
+      <div class="hero-cta">
+        <a href="#designs" class="btn">View designs</a>
+        <a href="assets/KJW_Resume.pdf" target="_blank" rel="noopener" class="btn btn-ghost">Download resume</a>
+      </div>
+      <ul class="hero-meta">
+        <li><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z M4 7l8 6 8-6"/></svg><a href="mailto:kylewerther@gmail.com">kylewerther@gmail.com</a></li>
+        <li><svg viewBox="0 0 24 24"><path d="M5 9v10M5 5v.01M10 19v-6a3 3 0 0 1 6 0v6M10 9v10M16 13v6"/></svg><a href="https://www.linkedin.com/in/kylewerther" target="_blank" rel="noopener">linkedin.com/in/kylewerther</a></li>
+        <li><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z M12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>New Jersey</li>
+      </ul>
+    </div>
+    <div class="hero-card">
+      <div class="title-block mono">
+        <div class="tb-row"><span>DWG</span><b>KW-001</b></div>
+        <div class="tb-row"><span>REV</span><b>A</b></div>
+        <div class="tb-row"><span>SCALE</span><b>1:1</b></div>
+        <div class="tb-row"><span>UNITS</span><b>MM</b></div>
+      </div>
+      <div class="stats">
+        <div><b>CSWP</b><span>SOLIDWORKS Certified Professional</span></div>
+        <div><b>10+</b><span>Custom test fixtures designed</span></div>
+        <div><b>5</b><span>Biosurgery device programs supported</span></div>
+        <div><b>M.S.</b><span>Biomedical Engineering, Rutgers</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DESIGNS ============ -->
+<section id="designs" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow mono">Selected work</p>
+      <h2>Designs</h2>
+      <p class="section-sub">Drag to rotate, scroll to zoom on any 3D model. Click a render to enlarge.</p>
+    </div>
+    <div id="projectList"></div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="section section-tint">
+  <div class="wrap about">
+    <div>
+      <p class="eyebrow mono">About</p>
+      <h2>Engineer who builds what he tests</h2>
+    </div>
+    <div class="about-body">
+      <p>I'm an R&amp;D engineer with an M.S. in Biomedical Engineering from Rutgers and hands-on medical device experience across design controls, test method development and validation, and GMP/GLP documentation under ISO 13485 and 21 CFR Part 820.</p>
+      <p>At Ethicon (Johnson &amp; Johnson MedTech) I develop ASTM-based mechanical test methods on Instron systems and design the custom fixtures that make those tests possible, taking each one from concept sketch through CAD, prototype and validation.</p>
+      <p>I'm looking for a full-time R&amp;D or design engineering role where I can keep doing both: designing the hardware and proving that it works.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE ============ -->
+<section id="experience" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow mono">Resume</p>
+      <h2>Experience</h2>
+    </div>
+    <div class="timeline">
+      <article class="tl-item">
+        <div class="tl-date mono">Apr 2026 – Present</div>
+        <div class="tl-card">
+          <h3>R&amp;D Engineer, Performance Evaluation <span class="pill">Contract</span></h3>
+          <p class="tl-org">Ethicon, Johnson &amp; Johnson MedTech · Raritan, NJ</p>
+          <ul>
+            <li>Develop and execute ASTM-based mechanical test methods on Instron / Bluehill Universal supporting design changes, test method validation and new product development across 5 biosurgery device programs.</li>
+            <li>Design and prototype 10+ custom SOLIDWORKS fixtures for Instron material testing, iterating from concept through validation.</li>
+            <li>Author test method validation protocols, reports and engineering memos using Minitab (Gage R&amp;R, ANOVA, regression).</li>
+            <li>Manage sample intake and inventory for a 1000+ sample design change project with full, audit-ready traceability.</li>
+          </ul>
+        </div>
+      </article>
+      <article class="tl-item">
+        <div class="tl-date mono">May 2024 – Apr 2026</div>
+        <div class="tl-card">
+          <h3>Graduate Researcher</h3>
+          <p class="tl-org">Androulakis Research Group, Rutgers University</p>
+          <ul>
+            <li>Expanded an in-silico circadian rhythm model to include the inflammatory response, calibrating 70+ parameters across 22 nonlinear ODEs in MATLAB against in-vitro data.</li>
+            <li>Ran temperature-state simulations to identify the parameter sensitivities driving model behavior.</li>
+          </ul>
+        </div>
+      </article>
+      <article class="tl-item">
+        <div class="tl-date mono">Jan 2023 – May 2023</div>
+        <div class="tl-card">
+          <h3>Quality Assurance Intern</h3>
+          <p class="tl-org">Cresilon · Brooklyn, NY</p>
+          <ul>
+            <li>Supported 510(k) clearance of TraumaGel, a Class II hemostatic device, by drafting 3 design verification protocols and 2 final reports under 21 CFR 820.</li>
+            <li>Established a seal integrity SOP through root cause analysis.</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    <div class="edu-grid">
+      <div class="edu-card">
+        <p class="eyebrow mono">Education</p>
+        <h3>Rutgers University – New Brunswick</h3>
+        <p>M.S. Biomedical Engineering <span class="muted">· May 2026</span></p>
+        <p>B.S. Biomedical Engineering <span class="muted">· May 2024</span></p>
+      </div>
+      <div class="edu-card">
+        <p class="eyebrow mono">Certifications</p>
+        <h3>SOLIDWORKS Certified Professional (CSWP)</h3>
+        <p>AIGPE Certified Minitab Expert</p>
+      </div>
+      <div class="edu-card">
+        <p class="eyebrow mono">Leadership</p>
+        <h3>Rutgers Dance Marathon</h3>
+        <p>HR Captain · team raised $500K+</p>
+        <p>Theta Tau · Recruitment &amp; Scholarship Chair</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section id="skills" class="section section-tint">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow mono">Toolbox</p>
+      <h2>Skills</h2>
+    </div>
+    <div class="skill-grid">
+      <div class="skill-card">
+        <h3>CAD &amp; Design</h3>
+        <div class="chips"><span>SOLIDWORKS (CSWP)</span><span>Part &amp; Assembly Modeling</span><span>Drawings</span><span>Fixture Design</span><span>Rapid Prototyping</span><span>Design Controls</span></div>
+      </div>
+      <div class="skill-card">
+        <h3>Testing &amp; Analysis</h3>
+        <div class="chips"><span>Instron</span><span>Bluehill Universal</span><span>Test Method Development</span><span>Test Method Validation</span><span>DOE</span><span>Minitab</span><span>Root Cause Analysis</span></div>
+      </div>
+      <div class="skill-card">
+        <h3>Quality &amp; Regulatory</h3>
+        <div class="chips"><span>ISO 13485</span><span>21 CFR Part 820</span><span>GMP</span><span>GLP</span><span>Technical Writing</span></div>
+      </div>
+      <div class="skill-card">
+        <h3>Programming</h3>
+        <div class="chips"><span>MATLAB</span><span>Python</span><span>Microsoft Office</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="section contact">
+  <div class="wrap contact-inner">
+    <h2>Let's build something.</h2>
+    <p>Open to full-time R&amp;D and mechanical design roles in medical devices. Source files and drawings available on request.</p>
+    <div class="hero-cta center">
+      <a href="mailto:kylewerther@gmail.com" class="btn">Email me</a>
+      <a href="https://www.linkedin.com/in/kylewerther" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
+      <a href="assets/KJW_Resume.pdf" target="_blank" rel="noopener" class="btn btn-ghost">Resume (PDF)</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap mono">© <span id="year"></span> Kyle Werther · Hosted on GitHub Pages</div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lb-close" aria-label="Close">×</button>
+  <img alt="">
+  <p class="lb-cap"></p>
+</div>
+
+<script src="projects.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
