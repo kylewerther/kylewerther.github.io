@@ -94,7 +94,7 @@ function legendHTML(l) {
     const v = l.max - (l.max - l.min) * s / steps;
     ticks.push(`<span>${l.format ? l.format(v) : fmt(v, l)}</span>`);
   }
-  return `<div class="legend"><p>${esc(l.title)}</p><div class="lg-body"><i></i><div class="lg-ticks">${ticks.join("")}</div></div></div>`;
+  return `<div class="legend"><p>${esc(l.title)}</p><div class="lg-body"><i></i><div class="lg-ticks">${ticks.join("")}</div></div>${l.load ? `<div class="lg-load"><span>Load</span><b>100%</b><em><u></u></em></div>` : ""}</div>`;
 }
 function fmt(v, l) {
   if (l.exp) return v.toExponential(2).replace("e-", "e−");
@@ -124,6 +124,7 @@ function prepare(root, v) {
       const m = new THREE.Mesh(g, mat);
       m.applyMatrix4(o.matrixWorld);
       out.add(m);
+      if (colored && v.animate) out.userData.tick = loadRamp(g.attributes.color);
     } else if (o.isLineSegments || o.isLine) {
       if (v.lines === false) return;
       const m = new THREE.LineSegments(o.geometry, new THREE.LineBasicMaterial({
@@ -135,6 +136,25 @@ function prepare(root, v) {
   });
   if (v.scale) out.scale.setScalar(v.scale);
   return out;
+}
+
+/* Linear static: stress scales with load. Read each vertex's result fraction back
+   from its rainbow hue (blue = min, red = max), then replay the load from 0 → 100%. */
+function loadRamp(attr) {
+  const n = attr.count, f = new Float32Array(n), c = new THREE.Color(), hsl = {};
+  for (let i = 0; i < n; i++) {
+    c.setRGB(attr.getX(i), attr.getY(i), attr.getZ(i)); c.getHSL(hsl);
+    f[i] = THREE.MathUtils.clamp(1 - (hsl.h * 360) / 240, 0, 1);
+  }
+  const lut = Array.from({ length: 256 }, (_, k) => new THREE.Color().setHSL((240 * (1 - k / 255)) / 360, 1, .5));
+  const PERIOD = 5000;
+  return (now, frame) => {
+    const t = .5 - .5 * Math.cos((now % PERIOD) / PERIOD * Math.PI * 2);
+    for (let i = 0; i < n; i++) { const k = lut[Math.round(f[i] * t * 255)]; attr.setXYZ(i, k.r, k.g, k.b); }
+    attr.needsUpdate = true;
+    const box = frame.querySelector(".lg-load");
+    if (box) { box.querySelector("b").textContent = Math.round(t * 100) + "%"; box.querySelector("u").style.width = (t * 100) + "%"; }
+  };
 }
 
 function createViewer(frame) {
@@ -157,7 +177,7 @@ function createViewer(frame) {
   const msg = document.createElement("div"); msg.className = "viewer-msg";
 
   const world = new THREE.Group(); scene.add(world);
-  let fit = () => {}, running = false, raf, token = 0;
+  let fit = () => {}, running = false, raf, token = 0, tick = null;
   const stage = $(".stage", frame);
   const resize = () => {
     const w = stage.clientWidth, h = stage.clientHeight || w * .75;
@@ -169,6 +189,7 @@ function createViewer(frame) {
   const loop = () => {
     cancelAnimationFrame(raf);
     if (!running || !visible) return;
+    if (tick) tick(performance.now(), frame);
     controls.update(); renderer.render(scene, camera); raf = requestAnimationFrame(loop);
   };
 
@@ -187,7 +208,9 @@ function createViewer(frame) {
       world.clear();
       parts.forEach(r => r.updateMatrixWorld(true));
       const obj = new THREE.Group();
-      obj.add(prepare(parts[0], v));
+      const main = prepare(parts[0], v);
+      tick = main.userData.tick || null;
+      obj.add(main);
       if (v.ghost) obj.add(prepare(parts[1], { ...v.ghost, opacity: v.ghost.opacity ?? .18, lines: false }));
       world.add(obj);
       const box = new THREE.Box3().setFromObject(obj), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());

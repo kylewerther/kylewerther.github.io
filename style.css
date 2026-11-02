@@ -13,7 +13,7 @@
   --radius: 16px;
   --shadow: 0 1px 2px rgba(18, 48, 79, .04), 0 8px 28px rgba(47, 111, 176, .08);
   --mono: "JetBrains Mono", ui-monospace, monospace;
-  --rainbow: linear-gradient(180deg, #ff0000 0%, #ff8000 14%, #ffff00 32%, #00ff00 52%, #00ffff 70%, #0080ff 86%, #0000ff 100%);
+  --rainbow: linear-gradient(180deg, hsl(0 100% 50%), hsl(30 100% 50%), hsl(60 100% 50%), hsl(90 100% 50%), hsl(120 100% 50%), hsl(150 100% 50%), hsl(180 100% 50%), hsl(210 100% 50%), hsl(240 100% 50%));
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 72px; }
@@ -215,6 +215,11 @@ h3 { font-size: 1.1rem; font-weight: 600; }
 .legend p { margin: 0 0 6px; color: var(--ink); font-weight: 500; }
 .lg-body { display: flex; gap: 8px; height: 132px; }
 .lg-body i { width: 12px; border-radius: 3px; background: var(--rainbow); border: 1px solid rgba(18,48,79,.2); }
+.lg-load { margin-top: 8px; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; align-items: center; }
+.lg-load span { color: var(--muted); }
+.lg-load b { font-weight: 500; color: var(--ink); text-align: right; }
+.lg-load em { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--pale); overflow: hidden; }
+.lg-load u { display: block; height: 100%; width: 100%; background: var(--accent); }
 .lg-ticks { display: flex; flex-direction: column; justify-content: space-between; line-height: 1; }
 @media (max-width: 600px) { .lg-body { height: 96px; } .legend { font-size: .6rem; padding: 6px 8px; } }
 

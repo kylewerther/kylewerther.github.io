@@ -98,14 +98,18 @@ window.PROJECTS = [
     tags: ["SOLIDWORKS", "FEA", "Simulation", "Fixture design", "Sealing"],
     views: [
       { type: "model", src: P + "watertight-cell/model.glb", label: "Fixture 3D" },
+      { type: "result", src: P + "watertight-cell/stress.glb", label: "Stress 3D", lineOpacity: .35,
+        caption: "Von Mises stress · drag to rotate",
+        legend: { title: "von Mises [MPa]", min: 0, max: 9.111, digits: 2 } },
       { type: "result", src: P + "watertight-cell/displacement.glb", label: "Displacement 3D", lineOpacity: .35,
         caption: "Resultant displacement (URES), true scale · drag to rotate",
         legend: { title: "URES [mm]", min: 0, max: 0.1531, digits: 3 } },
-      { type: "image", src: P + "watertight-cell/stress.jpg", label: "Stress",
-        caption: "Von Mises stress (N/m²)" },
       { type: "result", src: P + "watertight-cell/strain.glb", label: "Strain 3D", lineOpacity: .35,
         caption: "Equivalent strain (ESTRN) · drag to rotate",
-        legend: { title: "ESTRN", min: 8.1e-9, max: 1.988e-3, exp: true } }
+        legend: { title: "ESTRN", min: 8.1e-9, max: 1.988e-3, exp: true } },
+      { type: "result", src: P + "watertight-cell/stress.glb", label: "Stress animation", lineOpacity: .35, animate: true,
+        caption: "Von Mises stress as the clamp load ramps from 0 to 100% (linear static, so stress scales with load)",
+        legend: { title: "von Mises [MPa]", min: 0, max: 9.111, digits: 2, load: true } }
     ]
   }
 ];
