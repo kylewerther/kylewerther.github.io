@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { STLLoader } from "three/addons/loaders/STLLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+import { toCreasedNormals } from "three/addons/utils/BufferGeometryUtils.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s = "") => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -13,150 +14,200 @@ addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 8), 
 $("#navToggle").addEventListener("click", () => $("#navLinks").classList.toggle("open"));
 $("#navLinks").addEventListener("click", e => { if (e.target.tagName === "A") $("#navLinks").classList.remove("open"); });
 
-/* ---------- placeholder art ---------- */
-const placeholder = n => `
-<div class="placeholder"><svg viewBox="0 0 400 260" fill="none" stroke="#5b9bd5" stroke-width="1.5">
-  <rect x="60" y="60" width="200" height="130" rx="6" fill="#fff"/>
-  <circle cx="160" cy="125" r="34"/><circle cx="160" cy="125" r="14" stroke-dasharray="4 4"/>
-  <path d="M60 210h200M60 204v12M260 204v12" stroke="#9bbfe3"/>
-  <path d="M280 60v130M274 60h12M274 190h12" stroke="#9bbfe3"/>
-  <path d="M100 60v-18h120v18" /><path d="M126 125h68M160 91v68" stroke="#9bbfe3" stroke-dasharray="6 4"/>
-  <text x="160" y="232" fill="#7890a8" stroke="none" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">DESIGN ${n} · ADD RENDERS OR MODEL</text>
-</svg></div>`;
+const ICON = {
+  model: '<svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M12 12l8-4.5 M12 12v9 M12 12L4 7.5"/></svg>',
+  result: '<svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M8 10.5v5 M12 12.5v5.5 M16 10.5v5"/></svg>',
+  image: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 16l5-5 4 4 3-3 5 5"/></svg>',
+  video: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z"/></svg>'
+};
 
 /* ---------- render projects ---------- */
 const list = $("#projectList");
 (window.PROJECTS || []).forEach((p, i) => {
   const n = String(i + 1).padStart(2, "0");
-  const imgs = (p.images || []).filter(x => x && x.src);
-  const hasModel = !!p.model;
+  const views = (p.views || []).filter(v => v && v.src);
   const specs = Object.entries(p.specs || {}).filter(([, v]) => v);
   const el = document.createElement("article");
-  el.className = "project reveal" + (i % 2 ? " flip" : "");
+  el.className = "project reveal";
+  el.id = p.id || "design-" + n;
   el.innerHTML = `
-    <div class="p-media">
-      <div class="media-frame">
-        ${imgs.length && hasModel ? `<div class="media-tabs"><button data-v="img" class="on">Renders</button><button data-v="3d">3D model</button></div>` : ""}
-        <div class="stage"></div>
-      </div>
-      ${imgs.length > 1 ? `<div class="thumbs">${imgs.map((im, k) => `<button data-k="${k}" class="${k ? "" : "on"}"><img src="${esc(im.src)}" alt="" loading="lazy"></button>`).join("")}</div>` : ""}
-      <p class="caption"></p>
-    </div>
-    <div class="p-body">
-      <div class="p-num">${n}</div>
+    <header class="p-head">
+      <div class="p-num">${n} <span>${esc(p.kicker || "")}</span></div>
       <h3>${esc(p.title)}</h3>
       ${p.subtitle ? `<p class="p-sub">${esc(p.subtitle)}</p>` : ""}
-      ${p.summary ? `<p class="p-summary">${esc(p.summary)}</p>` : ""}
-      ${(p.highlights || []).length ? `<ul class="p-highlights">${p.highlights.map(h => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
-      ${specs.length ? `<div class="p-specs">${specs.map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}</div>` : ""}
-      ${(p.tags || []).length ? `<div class="chips">${p.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}
-      ${(p.links || []).length ? `<div class="p-links">${p.links.map((l, k) => `<a class="btn ${k ? "btn-ghost" : ""} btn-sm" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} →</a>`).join("")}</div>` : ""}
+    </header>
+    <div class="p-grid">
+      <div class="p-media">
+        <div class="media-frame"><div class="stage"></div></div>
+        ${views.length > 1 ? `<div class="view-tabs" role="tablist">${views.map((v, k) =>
+          `<button role="tab" data-k="${k}" class="${k ? "" : "on"}">${ICON[v.type] || ""}<span>${esc(v.label)}</span></button>`).join("")}</div>` : ""}
+        <p class="caption"></p>
+      </div>
+      <div class="p-body">
+        ${p.summary ? `<p class="p-summary">${esc(p.summary)}</p>` : ""}
+        ${(p.results || []).length ? `<div class="p-results">${p.results.map(r => `<div><b>${esc(r.value)}</b><span>${esc(r.label)}</span></div>`).join("")}</div>` : ""}
+        ${(p.highlights || []).length ? `<ul class="p-highlights">${p.highlights.map(h => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
+        ${specs.length ? `<dl class="p-specs">${specs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
+        ${(p.tags || []).length ? `<div class="chips">${p.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}
+      </div>
     </div>`;
   list.appendChild(el);
 
-  const stage = $(".stage", el), cap = $(".caption", el);
-  let viewer = null, cur = 0;
-  const showImg = k => {
-    cur = k;
+  const frame = $(".media-frame", el), stage = $(".stage", el), cap = $(".caption", el);
+  let viewer = null;
+
+  const show = k => {
+    const v = views[k];
+    el.querySelectorAll(".view-tabs button").forEach((b, j) => b.classList.toggle("on", j === k));
+    frame.querySelectorAll(".legend").forEach(x => x.remove());
     if (viewer) viewer.pause();
-    stage.innerHTML = `<img src="${esc(imgs[k].src)}" alt="${esc(imgs[k].caption || p.title)}">`;
-    $("img", stage).onclick = () => openLB(imgs[k]);
-    cap.textContent = imgs[k].caption || "";
-    el.querySelectorAll(".thumbs button").forEach((b, j) => b.classList.toggle("on", j === k));
-  };
-  const show3D = () => {
-    stage.innerHTML = "";
-    cap.textContent = "Interactive model · drag to rotate, scroll to zoom, right-drag to pan";
-    if (!viewer) viewer = createViewer(stage.parentElement, p.model);
-    else viewer.attach(stage.parentElement);
+    frame.querySelectorAll("video").forEach(x => x.pause());
+    cap.textContent = v.caption || "";
+    if (v.type === "image") {
+      stage.innerHTML = `<img src="${esc(v.src)}" alt="${esc(v.caption || p.title)}">`;
+      $("img", stage).onclick = () => openLB(v);
+    } else if (v.type === "video") {
+      stage.innerHTML = `<video src="${esc(v.src)}" ${v.poster ? `poster="${esc(v.poster)}"` : ""} controls muted loop playsinline preload="none"></video>`;
+      $("video", stage).play().catch(() => {});
+    } else {
+      stage.innerHTML = "";
+      if (!viewer) viewer = createViewer(frame);
+      viewer.show(v);
+      if (v.legend) frame.insertAdjacentHTML("beforeend", legendHTML(v.legend));
+      if (!v.caption) cap.textContent = "Interactive model · drag to rotate, scroll to zoom, right-drag to pan";
+    }
   };
 
-  if (imgs.length) showImg(0);
-  else if (hasModel) {
-    stage.innerHTML = `<div class="viewer-msg">Loading model…</div>`;
-    const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); show3D(); } }, { rootMargin: "200px" });
-    io.observe(el);
-  } else stage.innerHTML = placeholder(n);
+  el.querySelectorAll(".view-tabs button").forEach(b => b.onclick = () => show(+b.dataset.k));
 
-  el.querySelectorAll(".thumbs button").forEach(b => b.onclick = () => {
-    showImg(+b.dataset.k);
-    el.querySelectorAll(".media-tabs button").forEach(t => t.classList.toggle("on", t.dataset.v === "img"));
-  });
-  el.querySelectorAll(".media-tabs button").forEach(t => t.onclick = () => {
-    el.querySelectorAll(".media-tabs button").forEach(x => x.classList.toggle("on", x === t));
-    t.dataset.v === "3d" ? show3D() : showImg(cur);
-  });
+  if (!views.length) { stage.innerHTML = `<div class="viewer-msg">No media yet</div>`; return; }
+  // Defer the first view until the project is near the viewport (keeps first paint light).
+  stage.innerHTML = `<div class="viewer-msg">Loading…</div>`;
+  const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); show(0); } }, { rootMargin: "300px" });
+  io.observe(el);
 });
 
-/* ---------- 3D viewer ---------- */
-function createViewer(frame, url) {
-  const stage = $(".stage", frame);
+function legendHTML(l) {
+  const steps = 5, ticks = [];
+  for (let s = 0; s <= steps; s++) {
+    const v = l.max - (l.max - l.min) * s / steps;
+    ticks.push(`<span>${l.format ? l.format(v) : fmt(v, l)}</span>`);
+  }
+  return `<div class="legend"><p>${esc(l.title)}</p><div class="lg-body"><i></i><div class="lg-ticks">${ticks.join("")}</div></div></div>`;
+}
+function fmt(v, l) {
+  if (l.exp) return v.toExponential(2).replace("e-", "e−");
+  return v.toFixed(l.digits ?? 2).replace("-", "−");
+}
+
+/* ---------- 3D viewer (one renderer per project, cached models per view) ---------- */
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+const cache = new Map();
+const loadGLB = url => {
+  if (!cache.has(url)) cache.set(url, new Promise((res, rej) => loader.load(url, g => res(g.scene), undefined, rej)));
+  return cache.get(url);
+};
+
+function prepare(root, v) {
+  const out = new THREE.Group();
+  root.traverse(o => {
+    if (o.isMesh) {
+      let g = o.geometry;
+      if (!g.attributes.normal) g = toCreasedNormals(g, THREE.MathUtils.degToRad(v.crease ?? 35));
+      const colored = !!g.attributes.color;
+      const mat = colored
+        ? new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .75, metalness: 0, side: THREE.DoubleSide,
+            transparent: v.opacity < 1, opacity: v.opacity ?? 1, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 })
+        : new THREE.MeshStandardMaterial({ color: v.color ?? 0xbcd6f0, roughness: .48, metalness: .18, side: THREE.DoubleSide,
+            transparent: v.opacity < 1, opacity: v.opacity ?? 1, depthWrite: !(v.opacity < 1) });
+      const m = new THREE.Mesh(g, mat);
+      m.applyMatrix4(o.matrixWorld);
+      out.add(m);
+    } else if (o.isLineSegments || o.isLine) {
+      if (v.lines === false) return;
+      const m = new THREE.LineSegments(o.geometry, new THREE.LineBasicMaterial({
+        vertexColors: !!o.geometry.attributes.color, color: o.geometry.attributes.color ? 0xffffff : 0x12304f,
+        transparent: true, opacity: v.lineOpacity ?? .55 }));
+      m.applyMatrix4(o.matrixWorld);
+      out.add(m);
+    }
+  });
+  if (v.scale) out.scale.setScalar(v.scale);
+  return out;
+}
+
+function createViewer(frame) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(35, 4 / 3, 0.1, 5000);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xdbe8f5, 1.8));
-  const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(3, 5, 4); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xbcd8f5, 0.8); rim.position.set(-4, 2, -3); scene.add(rim);
+  const camera = new THREE.PerspectiveCamera(32, 4 / 3, 0.1, 5000);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xcfdff0, 2.2));
+  const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(3, 5, 4);
+  const rim = new THREE.DirectionalLight(0xdbeaf8, .7); rim.position.set(-4, 2, -3);
+  camera.add(key, rim); scene.add(camera);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 1.2;
+  controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 1;
   renderer.domElement.addEventListener("pointerdown", () => controls.autoRotate = false);
 
   const tools = document.createElement("div");
   tools.className = "viewer-tools";
-  tools.innerHTML = `<button title="Reset view">⟲</button><button title="Toggle auto-rotate">⟳</button>`;
-  const hint = document.createElement("div"); hint.className = "viewer-hint"; hint.textContent = "drag · scroll · right-drag";
+  tools.innerHTML = `<button title="Reset view" aria-label="Reset view">⟲</button><button title="Toggle auto-rotate" aria-label="Toggle auto-rotate">⟳</button>`;
+  const msg = document.createElement("div"); msg.className = "viewer-msg";
 
-  let fit = () => {}, running = true, raf;
+  const world = new THREE.Group(); scene.add(world);
+  let fit = () => {}, running = false, raf, token = 0;
+  const stage = $(".stage", frame);
   const resize = () => {
     const w = stage.clientWidth, h = stage.clientHeight || w * .75;
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   };
-  const loop = () => { if (!running) return; controls.update(); renderer.render(scene, camera); raf = requestAnimationFrame(loop); };
-
-  const addObject = obj => {
-    const box = new THREE.Box3().setFromObject(obj), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
-    obj.position.sub(c);
-    const d = size.length();
-    const grid = new THREE.GridHelper(d * 2, 20, 0x9bbfe3, 0xdbeaf8);
-    grid.position.y = -size.y / 2 - d * 0.002; scene.add(grid);
-    scene.add(obj);
-    fit = () => {
-      camera.near = d / 100; camera.far = d * 50; camera.updateProjectionMatrix();
-      camera.position.set(d * 0.9, d * 0.65, d * 1.1); controls.target.set(0, 0, 0); controls.update();
-    };
-    fit();
+  const ro = new ResizeObserver(resize);
+  const vis = new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && running) loop(); });
+  let visible = true;
+  const loop = () => {
+    cancelAnimationFrame(raf);
+    if (!running || !visible) return;
+    controls.update(); renderer.render(scene, camera); raf = requestAnimationFrame(loop);
   };
-
-  const ext = url.split("?")[0].split(".").pop().toLowerCase();
-  const fail = () => stage.innerHTML = `<div class="viewer-msg">Model not found: ${esc(url)}</div>`;
-  if (ext === "stl") {
-    new STLLoader().load(url, g => {
-      g.computeVertexNormals();
-      const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0xb4d2f0, metalness: 0.2, roughness: 0.5 }));
-      m.rotation.x = -Math.PI / 2; // SOLIDWORKS is Y-up in-app but STL exports Z-up
-      const grp = new THREE.Group(); grp.add(m); addObject(grp);
-    }, undefined, fail);
-  } else {
-    new GLTFLoader().load(url, g => addObject(g.scene), undefined, fail);
-  }
 
   tools.children[0].onclick = () => fit();
   tools.children[1].onclick = () => controls.autoRotate = !controls.autoRotate;
-  const ro = new ResizeObserver(resize);
 
-  const attach = f => {
-    const s = $(".stage", f);
-    s.innerHTML = ""; s.style.height = "100%";
-    s.append(renderer.domElement); f.append(tools, hint);
-    ro.observe(s); resize();
-    running = true; cancelAnimationFrame(raf); loop();
-  };
-  attach(frame);
+  async function show(v) {
+    const my = ++token;
+    stage.innerHTML = ""; stage.append(renderer.domElement); frame.append(tools);
+    msg.textContent = "Loading model…"; frame.append(msg);
+    ro.observe(stage); vis.observe(frame); resize();
+    running = true; loop();
+    try {
+      const parts = await Promise.all([v.src, ...(v.ghost ? [v.ghost.src] : [])].map(loadGLB));
+      if (my !== token) return;
+      world.clear();
+      parts.forEach(r => r.updateMatrixWorld(true));
+      const obj = new THREE.Group();
+      obj.add(prepare(parts[0], v));
+      if (v.ghost) obj.add(prepare(parts[1], { ...v.ghost, opacity: v.ghost.opacity ?? .18, lines: false }));
+      world.add(obj);
+      const box = new THREE.Box3().setFromObject(obj), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+      obj.position.sub(c);
+      const d = size.length();
+      const grid = new THREE.GridHelper(d * 1.6, 16, 0x9bbfe3, 0xdbeaf8);
+      grid.position.y = -size.y / 2 - d * .004; world.add(grid);
+      const dir = new THREE.Vector3(...(v.view || [0.85, 0.6, 1.1])).normalize();
+      fit = () => {
+        camera.near = d / 200; camera.far = d * 40; camera.updateProjectionMatrix();
+        const dist = (d / 2) / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2)) * (v.zoom || 1);
+        camera.position.copy(dir.clone().multiplyScalar(dist)); controls.target.set(0, 0, 0); controls.update();
+      };
+      controls.autoRotate = true; fit(); msg.remove();
+    } catch (e) {
+      msg.textContent = "Couldn't load model"; console.error(e);
+    }
+  }
   return {
-    attach,
-    pause() { running = false; tools.remove(); hint.remove(); }
+    show,
+    pause() { running = false; cancelAnimationFrame(raf); tools.remove(); msg.remove(); }
   };
 }
 
@@ -167,5 +218,5 @@ lb.onclick = e => { if (e.target !== $("img", lb)) lb.hidden = true; };
 addEventListener("keydown", e => { if (e.key === "Escape") lb.hidden = true; });
 
 /* ---------- reveal on scroll ---------- */
-const rio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); rio.unobserve(e.target); } }), { threshold: 0.08 });
-document.querySelectorAll(".reveal, .tl-item, .edu-card, .skill-card").forEach(x => { x.classList.add("reveal"); rio.observe(x); });
+const rio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); rio.unobserve(e.target); } }), { threshold: 0.06 });
+document.querySelectorAll(".reveal, .r-card, .stat").forEach(x => { x.classList.add("reveal"); rio.observe(x); });
