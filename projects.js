@@ -58,13 +58,13 @@ window.PROJECTS = [
     tags: ["SOLIDWORKS", "Flow Simulation", "CFD", "Fixture design", "Test method development"],
     views: [
       { type: "model", src: P + "conformability-fixture/model.glb", label: "Fixture 3D", view: [1.0, 0.55, 0.9] },
-      { type: "image", src: P + "conformability-fixture/setup.jpg", label: "Setup",
-        caption: "Pressure contours on the water path, shown inside the fixture (mm Hg)" },
+      { type: "video", src: P + "conformability-fixture/trajectories.mp4", poster: P + "conformability-fixture/trajectories-poster.jpg",
+        label: "Flow animation", caption: "Flow trajectories colored by pressure, inlet to outlet" },
       { type: "result", src: P + "conformability-fixture/pressure.glb", label: "Pressure 3D", lineOpacity: .25,
         view: [0.7, 0.75, 1.1], caption: "Surface pressure on the fluid domain · drag to rotate",
         legend: { title: "Pressure [mm Hg]", min: -6.73, max: 60.28 } },
-      { type: "video", src: P + "conformability-fixture/trajectories.mp4", poster: P + "conformability-fixture/trajectories-poster.jpg",
-        label: "Flow animation", caption: "Flow trajectories colored by pressure, inlet to outlet" }
+      { type: "image", src: P + "conformability-fixture/setup.jpg", label: "Setup",
+        caption: "Pressure contours on the water path, shown inside the fixture (mm Hg)" }
     ]
   },
 
