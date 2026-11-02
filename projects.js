@@ -57,14 +57,14 @@ window.PROJECTS = [
     specs: { CAD: "SOLIDWORKS", Simulation: "SOLIDWORKS Flow Simulation", Fluid: "Water", "Test pressure": "40 mmHg" },
     tags: ["SOLIDWORKS", "Flow Simulation", "CFD", "Fixture design", "Test method development"],
     views: [
+      { type: "model", src: P + "conformability-fixture/model.glb", label: "Fixture 3D", view: [1.0, 0.55, 0.9] },
       { type: "image", src: P + "conformability-fixture/setup.jpg", label: "Setup",
         caption: "Pressure contours on the water path, shown inside the fixture (mm Hg)" },
       { type: "result", src: P + "conformability-fixture/pressure.glb", label: "Pressure 3D", lineOpacity: .25,
         view: [0.7, 0.75, 1.1], caption: "Surface pressure on the fluid domain · drag to rotate",
         legend: { title: "Pressure [mm Hg]", min: -6.73, max: 60.28 } },
       { type: "video", src: P + "conformability-fixture/trajectories.mp4", poster: P + "conformability-fixture/trajectories-poster.jpg",
-        label: "Flow animation", caption: "Flow trajectories colored by pressure, inlet to outlet" },
-      { type: "model", src: P + "conformability-fixture/model.glb", label: "Fixture 3D", view: [1.0, 0.55, 0.9] }
+        label: "Flow animation", caption: "Flow trajectories colored by pressure, inlet to outlet" }
     ]
   },
 
@@ -91,6 +91,7 @@ window.PROJECTS = [
     specs: { CAD: "SOLIDWORKS", Simulation: "SOLIDWORKS Simulation (static)", Envelope: "100 × 130 × 100 mm" },
     tags: ["SOLIDWORKS", "FEA", "Simulation", "Fixture design", "Sealing"],
     views: [
+      { type: "model", src: P + "watertight-cell/model.glb", label: "Fixture 3D" },
       { type: "result", src: P + "watertight-cell/displacement.glb", label: "Displacement 3D", lineOpacity: .35,
         caption: "Resultant displacement (URES), true scale · drag to rotate",
         legend: { title: "URES [mm]", min: 0, max: 0.1531, digits: 3 } },
@@ -98,8 +99,7 @@ window.PROJECTS = [
         caption: "Von Mises stress (N/m²)" },
       { type: "result", src: P + "watertight-cell/strain.glb", label: "Strain 3D", lineOpacity: .35,
         caption: "Equivalent strain (ESTRN) · drag to rotate",
-        legend: { title: "ESTRN", min: 8.1e-9, max: 1.988e-3, exp: true } },
-      { type: "model", src: P + "watertight-cell/model.glb", label: "Fixture 3D" }
+        legend: { title: "ESTRN", min: 8.1e-9, max: 1.988e-3, exp: true } }
     ]
   }
 ];
