@@ -37,22 +37,23 @@ window.PROJECTS = [
   {
     id: "conformability-fixture",
     kicker: "Fixture + flow simulation",
-    title: "Adhesive Conformability Fixture",
-    subtitle: "Tests how well an adhesive conforms to skin under water held at a constant 40 mmHg",
+    title: "Wound Dressing Conformability Fixture",
+    subtitle: "Measures how a wound dressing conforms under constant low water pressure",
     summary:
-      "A water-pressure fixture that checks whether an adhesive stays conformed and sealed to a skin substrate. " +
-      "A standpipe sets the head pressure at a constant 40 mmHg and an in-line pressure gauge confirms it. " +
-      "I ran a SOLIDWORKS Flow Simulation of the full water path to check that the test chamber sees the " +
-      "target pressure and to find where the pressure losses happen.",
+      "A water-pressure fixture that checks wound dressing conformability by measuring radial displacement of the " +
+      "specimen under constant low pressure over time. A measuring rod marks the displacement at set intervals. " +
+      "This version holds pressure with a pressure regulator; an alternate design uses a standpipe. " +
+      "I ran a SOLIDWORKS Flow Simulation of the full flow path to check that the test chamber sees the target " +
+      "pressure and to confirm the relative pressure reading at the pressure gauge.",
     results: [
       { value: "40 mmHg", label: "Target chamber pressure" },
       { value: "60.3 mmHg", label: "Peak pressure at inlet" },
       { value: "−6.7 mmHg", label: "Minimum, at outlet" }
     ],
     highlights: [
-      "Standpipe sets a constant 40 mmHg head; a pressure gauge verifies it during the test",
-      "Flow simulation shows the test chamber sitting in the ~40 mmHg band",
-      "Largest pressure drop is at the chamber outlet, not along the supply line"
+      "Pressure regulator holds a constant low pressure; an alternate design uses a standpipe",
+      "Measuring rod marks radial displacement of the specimen at set intervals",
+      "Flow simulation puts the test chamber in the ~40 mmHg band and confirms the gauge reading"
     ],
     specs: { CAD: "SOLIDWORKS", Simulation: "SOLIDWORKS Flow Simulation", Fluid: "Water", "Test pressure": "40 mmHg" },
     tags: ["SOLIDWORKS", "Flow Simulation", "CFD", "Fixture design", "Test method development"],
