@@ -55,6 +55,11 @@ window.PROJECTS = [
       "Measuring rod marks radial displacement of the specimen at set intervals",
       "Flow simulation puts the test chamber in the ~40 mmHg band and confirms the gauge reading"
     ],
+    reference: {
+      label: "Test method based on",
+      text: "Queen D, Evans JH, Gaylor JDS, Courtney JM, Reid WH. An in vitro assessment of wound dressing conformability. Biomaterials. 1987;8(5):372–376.",
+      url: "https://doi.org/10.1016/0142-9612(87)90008-1"
+    },
     specs: { CAD: "SOLIDWORKS", Simulation: "SOLIDWORKS Flow Simulation", Fluid: "Water", "Test pressure": "40 mmHg" },
     tags: ["SOLIDWORKS", "Flow Simulation", "CFD", "Fixture design", "Test method development"],
     views: [

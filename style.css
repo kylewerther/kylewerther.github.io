@@ -176,6 +176,10 @@ h3 { font-size: 1.1rem; font-weight: 600; }
 .p-highlights { list-style: none; padding: 0; margin: 0 0 20px; }
 .p-highlights li { position: relative; padding-left: 22px; margin: 6px 0; color: var(--ink); font-size: .95rem; }
 .p-highlights li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 8px; height: 8px; border: 2px solid var(--accent-2); border-radius: 2px; transform: rotate(45deg); }
+.p-ref { margin: 0 0 18px; padding: 10px 14px; border-left: 3px solid var(--accent-2); background: var(--surface); border-radius: 0 10px 10px 0; font-size: .85rem; line-height: 1.5; color: var(--ink-2); }
+.p-ref span { display: block; font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.p-ref a { color: var(--ink-2); }
+.p-ref a:hover { color: var(--accent); }
 .p-specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 0 0 18px; background: var(--surface); }
 .p-specs div { padding: 10px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-right: -1px; margin-bottom: -1px; }
 .p-specs dt { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }

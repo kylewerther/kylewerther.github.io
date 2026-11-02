@@ -47,6 +47,7 @@ const list = $("#projectList");
         ${p.summary ? `<p class="p-summary">${esc(p.summary)}</p>` : ""}
         ${(p.results || []).length ? `<div class="p-results">${p.results.map(r => `<div><b>${esc(r.value)}</b><span>${esc(r.label)}</span></div>`).join("")}</div>` : ""}
         ${(p.highlights || []).length ? `<ul class="p-highlights">${p.highlights.map(h => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
+        ${p.reference ? `<p class="p-ref"><span>${esc(p.reference.label || "Reference")}</span>${p.reference.url ? `<a href="${esc(p.reference.url)}" target="_blank" rel="noopener">${esc(p.reference.text)}</a>` : esc(p.reference.text)}</p>` : ""}
         ${specs.length ? `<dl class="p-specs">${specs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
         ${(p.tags || []).length ? `<div class="chips">${p.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}
       </div>
