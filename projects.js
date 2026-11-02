@@ -14,23 +14,41 @@ const P = "assets/projects/";
 
 window.PROJECTS = [
   {
-    id: "pulley-fixture",
-    kicker: "Fixture design",
-    title: "Linear-to-Rotary Pulley Fixture",
-    subtitle: "Converts linear motion into rotation to drive a pulley fixture",
+    id: "watertight-cell",
+    kicker: "Fixture + FEA",
+    title: "Watertight Test Cell",
+    subtitle: "Clamp fixture that tests whether a product is waterproof",
     summary:
-      "A fixture that turns straight-line motion, such as a test frame's crosshead travel, into rotation for a pulley fixture. " +
-      "A gear rack meshes with a pinion on the pulley shaft, so linear travel of the rack turns the pulley. " +
-      "Modeled as a full SOLIDWORKS assembly.",
-    highlights: [
-      "Rack-and-pinion drive: linear travel in, pulley rotation out",
-      "Pinion and pulley carried together in one compact housing",
-      "Full assembly with the gear mesh modeled"
+      "A sealed test cell for checking whether a product holds out water. A screw clamp drives a tripod load spreader " +
+      "down onto the sample so the sealing force is applied evenly around the ring, and the spreader can be swapped " +
+      "to test different press-down components. I used a static FEA in SOLIDWORKS Simulation to evaluate whether " +
+      "the clamp load reaches the sample as an even pressure distribution.",
+    results: [
+      { value: "9.11 MPa", label: "Max von Mises stress" },
+      { value: "0.153 mm", label: "Max displacement" },
+      { value: "1.99 × 10⁻³", label: "Max equivalent strain" }
     ],
-    specs: { Software: "SOLIDWORKS", Mechanism: "Rack & pinion", Envelope: "132 × 237 × 52 mm" },
-    tags: ["SOLIDWORKS", "Assembly modeling", "Fixture design", "Mechanisms"],
+    highlights: [
+      "Three-legged load spreader spreads the screw force evenly around the sealing ring",
+      "Interchangeable press-down components for testing different samples",
+      "Stress, strain and displacement plotted across the full clamp assembly"
+    ],
+    specs: { CAD: "SOLIDWORKS", Simulation: "SOLIDWORKS Simulation (static)", Envelope: "100 × 130 × 100 mm" },
+    tags: ["SOLIDWORKS", "FEA", "Simulation", "Fixture design", "Sealing"],
     views: [
-      { type: "model", src: P + "pulley-fixture/model.glb", label: "3D model", view: [0.9, 0.45, 1.0], zoom: 1.2 }
+      { type: "model", src: P + "watertight-cell/model.glb", label: "Fixture 3D" },
+      { type: "result", src: P + "watertight-cell/stress.glb", label: "Stress 3D", lineOpacity: .35,
+        caption: "Von Mises stress · drag to rotate",
+        legend: { title: "von Mises [MPa]", min: 0, max: 9.111, digits: 2 } },
+      { type: "result", src: P + "watertight-cell/displacement.glb", label: "Displacement 3D", lineOpacity: .35,
+        caption: "Resultant displacement (URES), true scale · drag to rotate",
+        legend: { title: "URES [mm]", min: 0, max: 0.1531, digits: 3 } },
+      { type: "result", src: P + "watertight-cell/strain.glb", label: "Strain 3D", lineOpacity: .35,
+        caption: "Equivalent strain (ESTRN) · drag to rotate",
+        legend: { title: "ESTRN", min: 8.1e-9, max: 1.988e-3, exp: true } },
+      { type: "result", src: P + "watertight-cell/stress.glb", label: "Stress animation", lineOpacity: .35, animate: true,
+        caption: "Von Mises stress as the clamp load ramps from 0 to 100% (linear static, so stress scales with load)",
+        legend: { title: "von Mises [MPa]", min: 0, max: 9.111, digits: 2, load: true } }
     ]
   },
 
@@ -75,41 +93,23 @@ window.PROJECTS = [
   },
 
   {
-    id: "watertight-cell",
-    kicker: "Fixture + FEA",
-    title: "Watertight Test Cell",
-    subtitle: "Clamp fixture that tests whether a product is waterproof",
+    id: "pulley-fixture",
+    kicker: "Fixture design",
+    title: "Linear-to-Rotary Pulley Fixture",
+    subtitle: "Converts linear motion into rotation to drive a pulley fixture",
     summary:
-      "A sealed test cell for checking whether a product holds out water. A screw clamp drives a tripod load spreader " +
-      "down onto the sample so the sealing force is applied evenly around the ring, and the spreader can be swapped " +
-      "to test different press-down components. I used a static FEA in SOLIDWORKS Simulation to evaluate whether " +
-      "the clamp load reaches the sample as an even pressure distribution.",
-    results: [
-      { value: "9.11 MPa", label: "Max von Mises stress" },
-      { value: "0.153 mm", label: "Max displacement" },
-      { value: "1.99 × 10⁻³", label: "Max equivalent strain" }
-    ],
+      "A fixture that turns straight-line motion, such as a test frame's crosshead travel, into rotation for a pulley fixture. " +
+      "A gear rack meshes with a pinion on the pulley shaft, so linear travel of the rack turns the pulley. " +
+      "Modeled as a full SOLIDWORKS assembly.",
     highlights: [
-      "Three-legged load spreader spreads the screw force evenly around the sealing ring",
-      "Interchangeable press-down components for testing different samples",
-      "Stress, strain and displacement plotted across the full clamp assembly"
+      "Rack-and-pinion drive: linear travel in, pulley rotation out",
+      "Pinion and pulley carried together in one compact housing",
+      "Full assembly with the gear mesh modeled"
     ],
-    specs: { CAD: "SOLIDWORKS", Simulation: "SOLIDWORKS Simulation (static)", Envelope: "100 × 130 × 100 mm" },
-    tags: ["SOLIDWORKS", "FEA", "Simulation", "Fixture design", "Sealing"],
+    specs: { Software: "SOLIDWORKS", Mechanism: "Rack & pinion", Envelope: "132 × 237 × 52 mm" },
+    tags: ["SOLIDWORKS", "Assembly modeling", "Fixture design", "Mechanisms"],
     views: [
-      { type: "model", src: P + "watertight-cell/model.glb", label: "Fixture 3D" },
-      { type: "result", src: P + "watertight-cell/stress.glb", label: "Stress 3D", lineOpacity: .35,
-        caption: "Von Mises stress · drag to rotate",
-        legend: { title: "von Mises [MPa]", min: 0, max: 9.111, digits: 2 } },
-      { type: "result", src: P + "watertight-cell/displacement.glb", label: "Displacement 3D", lineOpacity: .35,
-        caption: "Resultant displacement (URES), true scale · drag to rotate",
-        legend: { title: "URES [mm]", min: 0, max: 0.1531, digits: 3 } },
-      { type: "result", src: P + "watertight-cell/strain.glb", label: "Strain 3D", lineOpacity: .35,
-        caption: "Equivalent strain (ESTRN) · drag to rotate",
-        legend: { title: "ESTRN", min: 8.1e-9, max: 1.988e-3, exp: true } },
-      { type: "result", src: P + "watertight-cell/stress.glb", label: "Stress animation", lineOpacity: .35, animate: true,
-        caption: "Von Mises stress as the clamp load ramps from 0 to 100% (linear static, so stress scales with load)",
-        legend: { title: "von Mises [MPa]", min: 0, max: 9.111, digits: 2, load: true } }
+      { type: "model", src: P + "pulley-fixture/model.glb", label: "3D model", view: [0.9, 0.45, 1.0], zoom: 1.2 }
     ]
   }
 ];
